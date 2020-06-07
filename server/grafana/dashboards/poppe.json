@@ -84,7 +84,7 @@
           "groupBy": [
             {
               "params": [
-                "15m"
+                "1m"
               ],
               "type": "time"
             }
@@ -464,7 +464,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -483,5 +483,5 @@
   "timezone": "",
   "title": "Poppe dashboard",
   "uid": "TytESOiGk",
-  "version": 3
+  "version": 6
 }
