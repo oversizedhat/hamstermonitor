@@ -21,13 +21,17 @@ const int shockPin = 2;
 // Built in led pin
 const int ledPin = 13;
 
-// Debounce millis tries to ensure that we dont registrate 
+// Debounce millis tries to ensure that we dont register
 // one vibration as muiltiple. Value needs to at least be above 200ms but 
 // depends on how much the component can move.
 const int debounceMs = 350;
 
-int lastLapTimestampMs = 0;
-int lapCount = 0;
+// As we have no other way to register when lap started than when previous
+// lap ended we set a timeout for laps. This will also be what gets registered the "first" laps.
+const int lapTimeoutMs = 2500;
+
+unsigned long lastLapTimestampMs = 0;
+
 int shockValue = 0;
 
 void setup() {
@@ -75,16 +79,16 @@ void loop() {
   if (shockValue == LOW) {
       int msSinceLastLap = millis() - lastLapTimestampMs;
       if (msSinceLastLap < debounceMs) {
-          //ignore, there is no way poppe did a lap that fast
+          // Ignore lap, there is no way poppe did a lap that fast
       } else { 
-          lapCount++; 
           lastLapTimestampMs = millis();
-          reportLap(lapCount, msSinceLastLap);
+          int lapTimeMs = msSinceLastLap<lapTimeoutMs?msSinceLastLap:lapTimeoutMs;
+          reportLap(lapTimeMs);
       }
   }
 }
 
-void reportLap(int lapCount, int lapTime){
+void reportLap(int lapTime){
   // Use WiFiClient class to create TCP connections
     WiFiClient client;
     if (!client.connect(host, httpPort)) {
@@ -94,7 +98,7 @@ void reportLap(int lapCount, int lapTime){
 
     // Needs to comply with influx inline protocal: https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial/
     // As we dont care about any repsonse here it will fail silently.
-    String data = "hamster,host=poppe lapTime=" + String(lapTime) + ",lapCount=" + String(lapCount) ;
+    String data = "hamster,host=poppe lapTime=" + String(lapTime) + ",lapCount=1";
 
     client.println(String("POST ") + uri + " HTTP/1.1");
     client.println(String("Host: ") + host);
