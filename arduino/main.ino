@@ -12,9 +12,6 @@ const char* host = "192.168.0.204";
 const int httpPort = 8186;
 const String uri = "/write?db=influx&precision=ms";
 
-const char* streamId   = "....................";
-const char* privateKey = "....................";
-
 // Pin for vibration module (GPIO2 pin on ESP8266-1)
 const int shockPin = 2;
 
@@ -39,7 +36,9 @@ void setup() {
   Serial.begin(9600);
   ESPserial.begin(115200);
   ESPserial.println("AT+IPR=9600");
+
   delay(1000);
+  
   ESPserial.end();
   ESPserial.begin(9600);
 
@@ -48,14 +47,12 @@ void setup() {
 
   delay(5000);
 
-  // We start by connecting to a WiFi network
+  // Connect to WiFi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
-  /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,
-     would try to act as both a client and an access-point and could cause
-     network-issues with your other WiFi-devices on your WiFi-network. */
+  // Set ESP8266 to wifi-client mode
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
@@ -64,8 +61,7 @@ void setup() {
     Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
+  Serial.println("WiFi connected!");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
@@ -77,46 +73,45 @@ void loop() {
   shockValue = digitalRead(shockPin);
 
   if (shockValue == LOW) {
-      int msSinceLastLap = millis() - lastLapTimestampMs;
-      if (msSinceLastLap < debounceMs) {
-          // Ignore lap, there is no way poppe did a lap that fast
-      } else { 
-          lastLapTimestampMs = millis();
-          int lapTimeMs = msSinceLastLap<lapTimeoutMs?msSinceLastLap:lapTimeoutMs;
-          reportLap(lapTimeMs);
-      }
+    int msSinceLastLap = millis() - lastLapTimestampMs;
+    if (msSinceLastLap < debounceMs) {
+        // Ignore lap, there is no way poppe did a lap that fast
+    } else { 
+        lastLapTimestampMs = millis();
+        int lapTimeMs = msSinceLastLap<lapTimeoutMs?msSinceLastLap:lapTimeoutMs;
+        reportLap(lapTimeMs);
+    }
   }
 }
 
-void reportLap(int lapTime){
-  // Use WiFiClient class to create TCP connections
-    WiFiClient client;
-    if (!client.connect(host, httpPort)) {
-        Serial.println("Connection failed, make sure telegraf is running with http listener on port 8186.");
-        return;
+void reportLap(int lapTime) {
+  WiFiClient client;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("Connection failed, make sure telegraf is running with http listener on port 8186.");
+    return;
+  }
+
+  // Needs to comply with influx line protocal: https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial/
+  // As we dont care about any response here it will fail silently.
+  String data = "hamster,host=poppe lapTime=" + String(lapTime) + ",lapCount=1";
+
+  client.println(String("POST ") + uri + " HTTP/1.1");
+  client.println(String("Host: ") + host);
+  client.println("Content-Type: application/x-www-form-urlencoded");
+  client.print("Content-Length: ");
+  client.println(data.length());
+  client.println();
+  client.println(data);
+
+  Serial.print("Request data: ");
+  Serial.println(data);
+            
+  unsigned long timeout = millis();
+  while (client.available() == 0) {
+    if (millis() - timeout > 5000) {
+      Serial.println(">>> Client Timeout!");
+      client.stop();
+      return;
     }
-
-    // Needs to comply with influx inline protocal: https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial/
-    // As we dont care about any repsonse here it will fail silently.
-    String data = "hamster,host=poppe lapTime=" + String(lapTime) + ",lapCount=1";
-
-    client.println(String("POST ") + uri + " HTTP/1.1");
-    client.println(String("Host: ") + host);
-    client.println("Content-Type: application/x-www-form-urlencoded");
-    client.print("Content-Length: ");
-    client.println(data.length());
-    client.println();
-    client.println(data);
-
-    Serial.print("Request data: ");
-    Serial.println(data);
-             
-    unsigned long timeout = millis();
-    while (client.available() == 0) {
-        if (millis() - timeout > 5000) {
-            Serial.println(">>> Client Timeout!");
-            client.stop();
-            return;
-        }
-    }
+  }
 }
