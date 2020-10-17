@@ -14,7 +14,7 @@ The overall idea was to meaure the hamster wheel to answer the question on every
 - A Arduino Vibration/shock sensor module
 - A breadboard
 - Some small steel wire, or similar
-- Power supply (See TODO link to section on ESP8266)
+- Power supply (Warning! Make sure you feed 3.3 V to the ESP-01)
 
 In this setup I used:
 - :hamster: Poppe and his wheel 
@@ -45,6 +45,7 @@ Naturally this is just for testing purposes... when you take your hamster monito
 ### Part 2: Assemble the Arduino components
 1. Wire the ESP-01 according to photos:
 ![](assets/DSC_1469.JPG)
+
 Note the elegant piece of metal wire taped to the shock sensor. This allowed me to slip it down into the hamster cage without risking to accidentally electrocute the hamster.
 ![](assets/DSC_1861.JPG)
 
@@ -81,8 +82,10 @@ THE_ALLOCATED_LOCAL_IP_ADDRESS_OF_ESP01
 
 ## The test "run"
 1. Slap on the piece of tape on the wheel, make sure it can spin nicely without touching the ground.
+
 ![](assets/DSC_1866.JPG)
 2. Fine tune the positioning of the piece of metal meeting the tape. You want to make sure the metal and tape touch each lap, just enough to register vibration without adding resistance. To make sure the wheel was fixed in place I screwed it onto a wooden board...
+
 ![](assets/DSC_1468.JPG)
 3. Open the Grafana Dashboard: http://localhost:3000 (admin:admin)
 4. Find the dashboard most elegantly named "Poppe Dashboard" unless you renamed it to match your hamster...
