@@ -99,8 +99,8 @@ Here is my test run.. such a glorious moment it was:
 ## Results
 From few days of collecting metrics I could see some trends:
 - Poppe does pretty much all his running from the moment we leave the living room for bed (he is hiding up until then). I.e. he starts around 22:45-23:15.
-- Poppe likes to run in at least two sessions, first one longer (1hr+) and a second shorter one (~20 min) after a short break. All in all pretty focused running early in the and then nothing.
-- Lap times are very consistent around 1 second seem to average around 1-1.2 seconds. Run session maybe slighly slower than the main one.
+- Poppe likes to run in at least two sessions, first one longer (1hr+) and a second shorter one (~20 min) after a short break. All in all pretty focused running early in the night.
+- Lap times are very consistent around 1-1.2 seconds per lap.
 
 Of the measured 5 days his record was a whopping 4019 meters. Sadly I accidentally deleted the data to prove that but here are some screenshots:smile:
 
