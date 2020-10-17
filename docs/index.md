@@ -1,0 +1,121 @@
+# DIY Realtime hamster monitoring with Arduino and Grafana
+
+Ever so often you stumble on a can-be-done-in-a-day (CBDIAD) Arduino projects that is both simple and rewarding. (For me) This was one of those :smile:
+
+The overall idea was to meaure the hamster wheel to answer the question on everyones minds.
+
+>But... how far does the he run each night?
+
+### What you need
+- A :hamster: with a wheel
+- A network connected computer, or cloud, our RPi for web services
+- Some Arduino board with internet access
+- A small strip masking tape (or whatever tape you might have)
+- A Arduino Vibration/shock sensor module
+- A breadboard
+- Some small steel wire, or similar
+- Power supply (See TODO link to section on ESP8266)
+
+In this setup I used:
+- :hamster: Poppe and his wheel 
+- My everyday laptop (running ubuntu)
+- 1 ESP8266 microcontroller (ESP-01) + Breadboard adapter for the ESP-01 (mine came with this)
+- 1 KY-002 Shock sensor module
+- A breadboard
+- 1 small piece of masking tape
+- 1 10(ish) cm long piece of small steel wire
+- A Velleman VMA 440 USB to serial adapter (set to 3.3 V)
+- ...and a rubber band
+
+
+Total cost (excluding laptop, hamster, hamster accessories (wheel) and power supply): Approx **8€**, but this very much depends on where you buy the Arduino components.
+
+
+## Setup
+### Part 1: Start backend services
+1. Start the backend services using the provided docker compose file.
+```
+git clone git@github.com:oversizedhat/hamstermonitor.git
+cd hamstermonitor
+cd server
+docker-compose up
+```
+Naturally this is just for testing purposes... when you take your hamster monitoring to production it's a whole different ballgame :smile:
+
+### Part 2: Assemble the Arduino components
+1. Wire the ESP-01 according to photos:
+![](assets/DSC_1469.JPG)
+Note the elegant piece of metal wire taped to the shock sensor. This allowed me to slip it down into the hamster cage without risking to accidentally electrocute the hamster.
+![](assets/DSC_1861.JPG)
+
+### Part 3: Connecting the pieces (upload the sketch)
+The scetch is hardcoded with my home wifi settings matching my home network which need to be changed...
+
+1. In main.ino change network name and ip adress of server to match your network.
+```
+const char* ssid = "comhem_D4737F";
+const char* host = "192.168.0.204";
+```
+2. Next to main.ino, create a file named secrets.ino and add you local wifi password in it like this:
+```
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+```
+3. In order to upload your updated sketch you need to make a few more wirings between the ESP-01 and the serial adapter (or Arduino if you are using it).
+    1. Connect RXD with TXD 
+    2. Connect TXD with RXD
+    3. Add a wire between GP0 and GRN (this will force the ESP-01 to start in bootloader mode)
+    4. Power off/on to start in bootlader mode
+    5. Upload sketch from IDE
+    6. When done and verified you can remove these wires.
+
+Open the Serial Monitor, power off/on and it should give you some response:
+```
+8�������%�Ready
+
+Connecting to YOUR_NETWORK_NAME
+..
+WiFi connected
+IP address: 
+THE_ALLOCATED_LOCAL_IP_ADDRESS_OF_ESP01
+```
+
+## The test "run"
+1. Slap on the piece of tape on the wheel, make sure it can spin nicely without touching the ground.
+![](assets/DSC_1866.JPG)
+2. Fine tune the positioning of the piece of metal meeting the tape. You want to make sure the metal and tape touch each lap, just enough to register vibration without adding resistance. To make sure the wheel was fixed in place I screwed it onto a wooden board...
+![](assets/DSC_1468.JPG)
+3. Open the Grafana Dashboard: http://localhost:3000 (admin:admin)
+4. Find the dashboard most elegantly named "Poppe Dashboard" unless you renamed it to match your hamster...
+5. Chances are you now need to wake up and motivate your hamster to go for a run. If you dont want to wake up the hamster you can spin the wheel a couple of times and observe the dashboard for changes, note the 5 sec delay between each refresh.
+
+Here is my test run.. such a glorious moment it was:
+{% include video_embed.html %}
+
+----
+
+## Results
+From few days of collecting metrics I could see some trends:
+- Poppe does pretty much all his running from the moment we leave the living room for bed (he is hiding up until then). I.e. he starts around 22:45-23:15.
+- Poppe likes to run in at least two sessions, first one longer (1hr+) and a second shorter one (~20 min) after a short break. All in all pretty focused running early in the and then nothing.
+- Lap times are very consistent around 1 second seem to average around 1-1.2 seconds. Run session maybe slighly slower than the main one.
+
+Of the measured 5 days his record was a whopping 4019 meters. Sadly I accidentally deleted the data to prove that but here are some screenshots:smile:
+
+Poppe 3 nights of running:
+![](assets/grafana1.png)
+One nights running divided into two sessions, the second with slightly higher average lap time:
+![](assets/grafana2.png)
+
+So I had tons of useful ideas where to go from here but as usual when something is working, interest fade quickly...
+
+
+### Some of the mistakes I made
+- Using my regular laptop for the server I needed to make sure wifi was not turned off during the night, which is the default power saving setting for Ubuntu at least. In Ubuntu this can be done by disabling powersaving (2) editing config file: /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+```
+[connection]
+wifi.powersave = 2
+```
+- Make sure your local IP adress is static. This can most likely be done in your router admin page for your network. Mine wasn't static which meant that when I turned on/off my computer the IP was changed and as the IP was hardcoded into the Arduino sketch the 8266 lost its ability to connect. Naturally I assumed the issue was something completely different and easily wasted an hour or two trying to figure out why it was suddenly broken... :grin:
+
+#### Some additional notes on the ESP8266
+The ESP8266 is a super neat little module with mincrocontroller capabilites, i.e. you can upload your Arduino sketches straight to instead of having to use an Arduino board. It also has a couple of general purpose pins. One thing to make note of is that it's easy to burn these with wrong voltage (needs to be 3.3 V).
