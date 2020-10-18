@@ -1,4 +1,4 @@
-# DIY Realtime hamster monitoring with Arduino and Grafana
+# DIY Realtime hamster monitoring using Arduino and Grafana
 
 Ever so often you stumble on a can-be-done-in-a-day (CBDIAD) Arduino project that is both simple and rewarding. This is one of those. :smile:
 
