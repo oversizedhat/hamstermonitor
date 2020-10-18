@@ -2,7 +2,7 @@
 
 Ever so often you stumble on a can-be-done-in-a-day (CBDIAD) Arduino project that is both simple and rewarding. This is one of those. :smile:
 
-The overall idea was to meaure the hamster wheel to answer the question on everyones minds:
+The overall idea was to measure the hamster wheel to answer the question on everyones minds:
 
 >But... how far does the he run each night?
 
@@ -11,7 +11,7 @@ The overall idea was to meaure the hamster wheel to answer the question on every
 - A network connected computer, or cloud, our RPi for the backend services
 - Arduino microcontroller with internet access
 - A small strip masking tape (or whatever tape you might have)
-- A Arduino Vibration/shock sensor module
+- A vibration/shock sensor module
 - A breadboard
 - Some small steel wire, or similar
 - Power supply (Warning! Make sure you feed 3.3 V to the ESP-01)
@@ -49,7 +49,7 @@ docker-compose up
 Naturally this is just for testing purposes... when you take your hamster monitoring to production it's a whole different ballgame :smile:
 
 ### Part 3: Connecting the pieces (upload the sketch)
-The scetch is hardcoded with wifi settings matching my home network which need to be changed...
+The sketch is hardcoded with wifi settings matching my home network which need to be changed...
 
 1. In main.ino change network name and ip adress of server to match your network.
 ```
@@ -127,4 +127,4 @@ wifi.powersave = 2
 - As usual when it comes to myself and Arduino about 80% of the time spent seem to go into the black hole of seemingly random issues. With the ESP8266 I think many of them have somehow been power related and Google usually helps.
 
 #### A final notes on the ESP8266
-The ESP8266 ESP-01 is a super neat little module with mincrocontroller capabilites, i.e. you can upload your Arduino sketches straight to instead of having to use an Arduino board. It also has a couple of general purpose pins. One thing to make note of is that it's easy to burn these with wrong voltage (needs to be 3.3 V). A tip is to order a couple of them in one batch so you don't have to be so careful...
+The ESP8266 ESP-01 is a super neat little module with microcontroller capabilites, i.e. you can upload your Arduino sketches straight to instead of having to use an Arduino board. It also has a couple of general purpose pins. One thing to make note of is that it's easy to burn these with wrong voltage (needs to be 3.3 V). A tip is to order a couple of them in one batch so you don't have to be so careful...
