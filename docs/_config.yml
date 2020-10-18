@@ -1,4 +1,5 @@
 theme: jekyll-theme-minimal
 repository: "oversizedhat/hamstermonitor"
+google_analytics: "UA-180802677-2"
 plugins:
   - jemoji

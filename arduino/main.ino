@@ -15,9 +15,6 @@ const String uri = "/write?db=influx&precision=ms";
 // Pin for vibration module (GPIO2 pin on ESP8266-1)
 const int shockPin = 2;
 
-// Built in led pin
-const int ledPin = 13;
-
 // Debounce millis tries to ensure that we dont register
 // one vibration as muiltiple. Value needs to at least be above 200ms but 
 // depends on how much the component can move.
