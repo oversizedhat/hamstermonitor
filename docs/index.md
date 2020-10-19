@@ -34,8 +34,11 @@ Total cost (excluding laptop, hamster, hamster accessories (wheel) and power sup
 ## Setup
 ### Part 1: Assemble the Arduino components
 Wire the ESP-01 according to photo below (it's the shock sensor sticking down into the hamster cage, next picture shows it better).
+
 ![](assets/DSC_1469.JPG)
+
 The metal wire is attached to the shock sensor with a piece of tape.  This allowed me to slip it down into the hamster cage without risking to accidentally electrocute the hamster.
+
 ![](assets/DSC_1861.JPG)
 
 ### Part 2: Start the backend services
@@ -84,9 +87,11 @@ THE_ALLOCATED_LOCAL_IP_ADDRESS_OF_ESP01
 Slap on the piece of tape on the wheel, make sure it can spin nicely without touching the ground.
 
 ![](assets/DSC_1866.JPG)
+
 Fine tune the positioning of the piece of metal meeting the tape. You want to make sure the metal and tape touch each lap, just enough to register vibration without adding resistance. To make sure the wheel was fixed in place I screwed it onto a wooden board...
 
 ![](assets/DSC_1468.JPG)
+
 Time to test it out a bit... 
 3. Open the Grafana Dashboard: http://localhost:3000 (admin:admin)
 4. Find the dashboard most elegantly named "Poppe Dashboard" unless you renamed it to match your hamster...
