@@ -53,8 +53,8 @@ The sketch is hardcoded with wifi settings matching my home network which need t
 
 1. In main.ino change network name and ip adress of server to match your network.
 ```
-const char* ssid = "comhem_D4737F";
-const char* host = "192.168.0.204";
+const char* ssid = "YOUR_WIFI_NAME";
+const char* host = "YOUR_SERVER_IP_ADRESS";
 ```
 2. Next to main.ino, create a file named secrets.ino and add you local wifi password in it like this:
 ```
